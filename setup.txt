@@ -7,6 +7,19 @@ kubectl create namespace monitoring
 kubectl create namespace production
 kubectl create namespace development
 
+# Creating credentials
+gcloud iam service-accounts keys create gcr-docker-cred.json --iam-account=service-account-name@project-id.iam.gserviceaccount.com
+
+gcloud projects add-iam-policy-binding <PROJECT_ID> \
+    --member="serviceAccount:<SERVICE_ACCOUNT_EMAIL>" \
+    --role="roles/artifactregistry.reader"
+
+kubectl create secret docker-registry gcrsecret \
+    --docker-server=<REGION>-docker.pkg.dev \
+    --docker-username=_json_key \
+    --docker-password="$(cat gcr-docker-cred.json)" \
+    --docker-email=<EMAIL> -n production
+
 # Installing helm
 curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
 chmod 700 get_helm.sh
