@@ -11,6 +11,7 @@ import { WebhookFormSchema, WebhookFormSchemaType } from "@/types/form/WebhookFo
 import { deleteFeed, processForm } from "@/app/utils/WebhookServerAction";
 import useFormStore from "../FormState";
 import { errors as responseErrors } from "@/app/utils/Utils";
+import Link from "next/link";
 
 const intervals = [
     {
@@ -164,7 +165,7 @@ export default function Form() {
                 </div>
 
                 <div>
-                    <label htmlFor="webhook">What is the webhook's url?</label>
+                    <label htmlFor="webhook"><span>What is the </span><Link className="bold hover:underline" target="_blank" rel="noopener noreferrer" href="https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks">webhook's</Link><span> url?</span></label>
                     <input id="webhook" {...register("webhook")} type="text" placeholder="https://discord.com/api/webhooks/1234567890/abcdefgzhijklmno" />
                 </div>
 
