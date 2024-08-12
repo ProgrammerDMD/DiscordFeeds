@@ -18,9 +18,7 @@ export async function POST(request: Request) {
             const event = paddle.webhooks.unmarshal(rawRequestBody, secretKey, signature);
             if (!event) return NextResponse.json({}, { status: 403 });
 
-            if (event.eventType === EventName.SubscriptionUpdated && event.data.customData) {
-                upgradeUser((event.data.customData as CustomData).userId, event.data.id as string);
-            } else if (event.eventType === EventName.TransactionCompleted && event.data.customData) {
+            if (event.eventType === EventName.TransactionCompleted && event.data.customData) {
                 upgradeUser((event.data.customData as CustomData).userId, event.data.subscriptionId as string);
             }
 
