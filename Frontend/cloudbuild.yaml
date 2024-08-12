@@ -20,6 +20,11 @@ steps:
     id: select-builder
   - name: 'gcr.io/cloud-builders/docker'
     entrypoint: 'bash'
-    args: ['-c', 'docker buildx build --cache-from type=registry,$LOCATION-docker.pkg.dev/$PROJECT_ID/frontend/production:latest --platform "linux/arm64" -t "$LOCATION-docker.pkg.dev/$PROJECT_ID/frontend/production:latest" ./Frontend/ --pull --push']
+    args: ['-c', 'docker pull --platform "linux/arm64" $LOCATION-docker.pkg.dev/$PROJECT_ID/frontend/production:latest || exit 0']
+    id: pull-image
+  - name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    args: ['-c', 'docker buildx build --cache-from $LOCATION-docker.pkg.dev/$PROJECT_ID/frontend/production:latest --platform "linux/arm64" -t "$LOCATION-docker.pkg.dev/$PROJECT_ID/frontend/production:latest" ./Frontend/ --push']
+    id: build-image
 options:
   logging: CLOUD_LOGGING_ONLY
