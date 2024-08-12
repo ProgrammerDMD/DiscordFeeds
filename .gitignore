@@ -1,0 +1,14 @@
+API/.idea/**
+API/.mvn/**
+API/mvnw
+API/mvnw.cmd
+API/target/**
+Bot/.idea/**
+Bot/.mvn/**
+Bot/mvnw
+Bot/mvnw.cmd
+Bot/target/**
+Frontend/node_modules/**
+Bot/chart/values-development.yaml
+API/chart/values-development.yaml
+Frontend/chart/values-development.yaml

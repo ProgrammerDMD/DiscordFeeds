@@ -1,0 +1,47 @@
+apiVersion: skaffold/v4beta11
+kind: Config
+metadata:
+  name: discordfeeds
+build:
+  artifacts:
+    - image: api
+      context: API
+      docker:
+        dockerfile: Dockerfile
+    - image: bot
+      context: Bot
+      docker:
+        dockerfile: Dockerfile
+    - image: frontend
+      context: Frontend
+      docker:
+        dockerfile: Dockerfile
+        target: development
+      sync:
+        manual:
+          - dest: "app/"
+            src: "app/**/*.tsx"
+            strip: "app/"
+          - dest: "app/"
+            src: "app/**/*.ts"
+            strip: "app/"
+          - dest: "types/"
+            src: "types/**/*.ts"
+            strip: "types/"
+deploy:
+  helm:
+    releases:
+      - name: api
+        chartPath: API/chart
+        valuesFiles:
+          - API/chart/values-development.yaml
+      - name: bot
+        chartPath: Bot/chart
+        valuesFiles:
+          - Bot/chart/values-development.yaml
+        version: 0.1.0
+      - name: frontend
+        chartPath: Frontend/chart
+        valuesFiles:
+          - Frontend/chart/values-development.yaml
+        version: 0.1.0

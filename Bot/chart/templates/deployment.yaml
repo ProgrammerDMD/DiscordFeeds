@@ -1,0 +1,47 @@
+{{- range $i, $e := until (div (.Values.secrets.TOTAL_SHARDS) (.Values.secrets.SHARDS_PER_POD) | int) }}
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ $.Values.name }}-{{ $i }}-{{ $.Values.secrets.TOTAL_SHARDS }}
+  namespace: {{ $.Values.namespace }}
+  labels:
+    name: {{ $.Values.name }}-{{ $i }}-{{ $.Values.secrets.TOTAL_SHARDS }}
+spec:
+  imagePullSecrets:
+  - name: gcrsecret
+  containers:
+    - name: bot
+      image: {{ $.Values.image }}:latest
+      imagePullPolicy: Always
+      ports:
+        - containerPort: {{ $.Values.secrets.PORT }}
+      livenessProbe:
+        httpGet:
+          path: /actuator/health
+          port: {{ $.Values.secrets.PORT }}
+        initialDelaySeconds: 60
+        periodSeconds: 30
+        failureThreshold: 10
+      startupProbe:
+        httpGet:
+          path: /actuator/health
+          port: {{ $.Values.secrets.PORT }}
+        failureThreshold: 30
+        periodSeconds: 5
+      env:
+        - name: PORT
+          value: {{ $.Values.secrets.PORT | quote }}
+        - name: BOT_TOKEN
+          value: {{ $.Values.secrets.BOT_TOKEN | quote }}
+        - name: SENTRY_AUTH_TOKEN
+          value: {{ $.Values.secrets.SENTRY_AUTH_TOKEN | quote }}
+        - name: SENTRY_DSN
+          value: {{ $.Values.secrets.SENTRY_DSN | quote }}
+        - name: TOTAL_SHARDS
+          value: {{ $.Values.secrets.TOTAL_SHARDS | quote }}
+        - name: MINIMUM_SHARDS
+          value: {{ mul $i ($.Values.secrets.SHARDS_PER_POD) | quote }}
+        - name: MAXIMUM_SHARDS
+          value: {{ sub (add (mul $i ($.Values.secrets.SHARDS_PER_POD)) ($.Values.secrets.SHARDS_PER_POD)) 1 | quote }}
+---
+{{- end }}

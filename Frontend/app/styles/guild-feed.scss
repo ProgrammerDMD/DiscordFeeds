@@ -1,0 +1,74 @@
+form {
+
+    h1.error {
+        width: fit-content;
+        background-color: aqua;
+    }
+
+    > div {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    input, select {
+        border: black solid 1px;
+        outline: none;
+        border-radius: 1.5rem;
+    }
+
+    input[type="text"],
+    input[type="url"] {
+        border-radius: 1.5rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+    }
+
+}
+
+div {
+    backdrop-filter: blur(3px);
+}
+
+label {
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    img {
+        cursor: inherit;
+        z-index: 1;
+        width: 2.5em;
+        height: 2.5em;
+        padding: 0.5em;
+
+        box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+        background-color: white;
+        border-radius: 0.75rem;
+
+        transition-property: box-shadow;
+        transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+        transition-duration: 150ms;
+
+
+        &:hover {
+            box-shadow: rgba(0,0,0,0.4) 0px 0px 0px 2px, rgba(0,0,0,0.65) 0px 4px 6px -1px, rgba(255,255,255,0.08) 0px 1px 0px inset;
+        }
+
+    }
+
+    >input[type="radio"]:checked+img {
+        box-shadow: rgba(0,0,0,0.4) 0px 0px 0px 2px, rgba(0,0,0,0.65) 0px 4px 6px -1px, rgba(255,255,255,0.08) 0px 1px 0px inset !important;
+    }
+
+    input[type="radio"] {
+        cursor: inherit;
+        opacity: 0;
+        position: absolute;
+    }
+
+}

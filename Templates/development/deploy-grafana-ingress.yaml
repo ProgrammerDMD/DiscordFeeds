@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+ name: grafana-ingress
+ namespace: monitoring
+ annotations:
+  cert-manager.io/cluster-issuer: "letsencrypt-staging"
+spec:
+ tls:
+   - hosts:
+       - grafana.discordfeeds.com
+     secretName: discordfeeds-com-staging-tls
+ rules:
+   - host: grafana.discordfeeds.com
+     http:
+       paths:
+         - path: /
+           pathType: Prefix
+           backend:
+             service:
+               name: prometheus-grafana
+               port:
+                number: 80

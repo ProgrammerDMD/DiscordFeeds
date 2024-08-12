@@ -1,0 +1,22 @@
+name: "discordfeeds-frontend"
+namespace: "production"
+replicas: 1
+image: "frontend"
+
+clusterissuer: "letsencrypt-production"
+certificate: "discordfeeds-com-production-tls"
+
+secrets:
+  API_URL: "http://discordfeeds-api.production.svc.cluster.local:8080"
+  DISCORD_ID: ""
+  DISCORD_SECRET: ""
+  POSTGRESQL_HOST: ""
+  POSTGRESQL_USER: "postgres"
+  POSTGRESQL_PASSWORD: ""
+  POSTGRESQL_DATABASE: "website"
+  PADDLE_API: ""
+  PADDLE_WEBHOOK_SECRET: ""
+  BASE_URL: ""
+  SENTRY_AUTH_TOKEN: ""
+  SENTRY_DSN: ""
+  PADDLE_ENVIRONMENT: "production"

@@ -1,0 +1,38 @@
+management:
+  endpoint:
+    health:
+      show-details: always
+security:
+  require-ssl: false
+spring:
+  datasource:
+    url: ${POSTGRESQL_URL}
+    username: ${POSTGRESQL_USER}
+    password: ${POSTGRESQL_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  quartz:
+    scheduler-name: "DiscordFeedsScheduler"
+    auto-startup: true
+    job-store-type: "jdbc"
+    wait-for-jobs-to-complete-on-shutdown: false
+    jdbc:
+      initialize-schema: "never"
+    properties:
+      org.quartz.jobStore.driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
+      org.quartz.jobStore.isClustered: true
+      org.quartz.scheduler.instanceId: auto
+      org.quartz.threadPool.threadCount: ${POSTGRESQL_MAX_THREADS}
+      org.quartz.jobListener.FailedJobsListener.class: me.programmerdmd.discordfeeds.api.jobs.FailedJobsListener
+server:
+  error:
+    include-message: always
+  port: ${PORT}
+sentry:
+  dsn: ${SENTRY_DSN}
+  sampleRate: 0.2
+  tracesSampleRate: 0.5

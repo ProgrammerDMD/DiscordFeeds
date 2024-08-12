@@ -1,0 +1,22 @@
+name: "discordfeeds-frontend"
+namespace: "development"
+replicas: 1
+image: "frontend"
+
+clusterissuer: "letsencrypt-staging"
+certificate: "discordfeeds-com-staging-tls"
+
+secrets:
+  API_URL: "http://discordfeeds-api.development.svc.cluster.local:8080"
+  DISCORD_ID: ""
+  DISCORD_SECRET: ""
+  POSTGRESQL_HOST: ""
+  POSTGRESQL_USER: "postgres"
+  POSTGRESQL_PASSWORD: ""
+  POSTGRESQL_DATABASE: "website"
+  PADDLE_API: ""
+  PADDLE_WEBHOOK_SECRET: ""
+  BASE_URL: "http://localhost:3000"
+  SENTRY_AUTH_TOKEN: ""
+  SENTRY_DSN: ""
+  PADDLE_ENVIRONMENT: "development"

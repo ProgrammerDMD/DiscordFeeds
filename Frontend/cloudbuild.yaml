@@ -1,0 +1,25 @@
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - run
+      - '--privileged'
+      - 'linuxkit/binfmt:v1.0.0'
+    id: initialize-qemu
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - buildx
+      - create
+      - '--name'
+      - buildxbuilder
+    id: create-builder
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - buildx
+      - use
+      - buildxbuilder
+    id: select-builder
+  - name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    args: ['-c', 'docker buildx build --platform "linux/arm64" -t "$LOCATION-docker.pkg.dev/$PROJECT_ID/frontend/production:latest" ./Frontend/ --push']
+options:
+  logging: CLOUD_LOGGING_ONLY

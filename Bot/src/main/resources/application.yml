@@ -1,0 +1,18 @@
+management:
+  endpoint:
+    health:
+      show-details: always
+discordfeeds:
+  token: "${BOT_TOKEN}"
+  sharding:
+    total: ${TOTAL_SHARDS}
+    minimum: ${MINIMUM_SHARDS}
+    maximum: ${MAXIMUM_SHARDS}
+security:
+  require-ssl: false
+  port: ${PORT}
+sentry:
+  dsn: ${SENTRY_DSN}
+  sampleRate: 0.2
+  tracesSampleRate: 0.5
+  exception-resolver-order: -2147483647

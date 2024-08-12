@@ -1,0 +1,14 @@
+{{- range $i, $e := until (div (.Values.secrets.TOTAL_SHARDS) (.Values.secrets.SHARDS_PER_POD) | int) }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $.Values.name }}-{{ $i }}-{{ $.Values.secrets.TOTAL_SHARDS }}
+spec:
+  selector:
+    name: {{ $.Values.name }}-{{ $i }}-{{ $.Values.secrets.TOTAL_SHARDS }}
+  ports:
+      - protocol: TCP
+        port: {{ $.Values.secrets.PORT }}
+        targetPort: {{ $.Values.secrets.PORT }}
+---
+{{- end }}

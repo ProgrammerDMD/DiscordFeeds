@@ -1,0 +1,18 @@
+name: "discordfeeds-api"
+namespace: "development"
+replicas: 1
+image: "api"
+
+secrets:
+  PORT: 8080
+  TOTAL_SHARDS: 4
+  SHARDS_PER_POD: 2
+  ENVIRONMENT: "development"
+  POSTGRESQL_URL: "jdbc:postgresql://localhost:5432/api"
+  POSTGRESQL_USER: "postgres"
+  POSTGRESQL_PASSWORD: ""
+  POSTGRESQL_MAX_THREADS: 4
+  PROXY_USER: ""
+  PROXY_PASSWORD: ""
+  SENTRY_AUTH_TOKEN: ""
+  SENTRY_DSN: ""

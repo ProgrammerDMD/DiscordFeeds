@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+ name: stackgres-ingress
+ namespace: stackgres
+ annotations:
+  cert-manager.io/cluster-issuer: "letsencrypt-production"
+spec:
+ tls:
+   - hosts:
+       - stackgres.discordfeeds.com
+     secretName: discordfeeds-com-production-tls
+ rules:
+   - host: stackgres.discordfeeds.com
+     http:
+       paths:
+         - path: /
+           pathType: Prefix
+           backend:
+             service:
+               name: stackgres-restapi
+               port:
+                number: 443

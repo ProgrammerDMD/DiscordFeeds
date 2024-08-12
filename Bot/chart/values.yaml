@@ -1,0 +1,12 @@
+name: "discordfeeds-bot"
+namespace: "production"
+image: "bot"
+
+secrets:
+  PORT: 8080
+  BOT_TOKEN: ""
+  TOTAL_SHARDS: 4
+  SHARDS_PER_POD: 2
+  ENVIRONMENT: "production"
+  SENTRY_AUTH_TOKEN: ""
+  SENTRY_DSN: ""
