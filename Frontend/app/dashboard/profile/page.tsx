@@ -49,7 +49,14 @@ export default async function Page({
             <EventModal type="cancel_delete_error" />
         }
         <DeleteModal subscribed={!!payment} />
-        <SubscriptionModal userId={user?.id as string} payment={payment} successUrl={process.env.BASE_URL!} />
+        <SubscriptionModal
+            userId={user?.id as string}
+            payment={payment}
+            successUrl={process.env.BASE_URL!}
+            productId={ process.env.PADDLE_PRODUCT_ID! }
+            environment={ process.env.PADDLE_ENVIRONMENT! === "production" ? "production" : "sandbox" }
+            clientId={ process.env.PADDLE_CLIENT_ID! }
+        />
         <div className="h-4/5 w-full">
             <div className="overflow-y-auto flex flex-col items-center h-full w-full p-10 gap-3 bg-white rounded-3xl overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.12)]">
                 <div className="flex flex-col items-center h-fit w-full bg-blue bg-opacity-10 py-5 gap-2 rounded-3xl">
@@ -90,7 +97,7 @@ export default async function Page({
                     </Link>
                 </div>
                 <div className="flex gap-2 mt-auto flex-wrap justify-center">
-                    { user?.deleting ? <CancelDeleteButton /> : <DeleteButton /> }
+                    {user?.deleting ? <CancelDeleteButton /> : <DeleteButton />}
                     <form action={logout}>
                         <button className="w-fit h-fit px-7 py-1 rounded-full bg-blue transition-colors duration-100 ease-linear hover:bg-opacity-80">
                             <span className={`${koulen.className} text-white text-[2.5em]`}>Log out</span>

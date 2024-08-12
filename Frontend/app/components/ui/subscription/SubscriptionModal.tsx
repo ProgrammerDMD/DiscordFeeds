@@ -4,13 +4,15 @@ import { encodesanssemi, koulen } from "../Fonts";
 import useSubscriptionStore from "./SubscriptionState";
 import { useEffect, useState } from "react";
 import { initializePaddle, Paddle } from "@paddle/paddle-js";
-import { upgradeUserDB } from "@/app/utils/ServerActions";
 import { UserPayment } from "../../backend/db/schema";
 
-export default function SubscriptionModal({ userId, payment, successUrl }: {
+export default function SubscriptionModal({ userId, payment, successUrl, productId, environment, clientId }: {
     userId: string,
     payment: UserPayment | undefined,
-    successUrl: string
+    successUrl: string,
+    productId: string,
+    environment: "production" | "sandbox",
+    clientId: string
 }) {
     const [paddle, setPaddle] = useState<Paddle>();
     const { visible, setVisible } = useSubscriptionStore();
@@ -18,7 +20,7 @@ export default function SubscriptionModal({ userId, payment, successUrl }: {
     useEffect(() => {
         async function fetchPaddle() {
             const paddleInstance = await initializePaddle({
-                environment: 'sandbox', token: 'test_2d26b6270e10ead55a8fb1847b8', debug: true, checkout: {
+                environment: environment, token: clientId, debug: false, checkout: {
                     settings: {
                         displayMode: "overlay",
                         successUrl: successUrl + "/dashboard/profile?event=success",
@@ -35,7 +37,7 @@ export default function SubscriptionModal({ userId, payment, successUrl }: {
     const openCheckout = () => {
         paddle?.Checkout.open({
             items: [{
-                priceId: "pri_01j37kqwxhfmj3ddaap18zqpzk",
+                priceId: productId,
             }],
             customData: {
                 userId: userId
