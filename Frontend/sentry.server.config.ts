@@ -10,7 +10,7 @@ Sentry.init({
   sampleRate: 0.2,
 
   tracesSampler: ({ name, attributes, parentSampled }) => {
-    if (name.includes("paddle") || name.includes("upgrade") || name.includes("database")) {
+    if (name.includes("paddle") || name.includes("upgrade") || name.includes("database") || name.includes("transaction") || name.includes("payment")) {
       return 1;
     }
     return 0.5;

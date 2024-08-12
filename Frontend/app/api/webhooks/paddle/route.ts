@@ -18,8 +18,8 @@ export async function POST(request: Request) {
             const event = paddle.webhooks.unmarshal(rawRequestBody, secretKey, signature);
             if (!event) return NextResponse.json({}, { status: 403 });
 
-            if (event.eventType === EventName.TransactionPaid && event.data.customData) {
-                upgradeUser((event.data.customData as CustomData).userId, event.data.subscriptionId as string);
+            if (event.eventType === EventName.SubscriptionActivated && event.data.customData) {
+                upgradeUser((event.data.customData as CustomData).userId, event.data.id as string);
             }
 
             return NextResponse.json({}, { status: 200 });
