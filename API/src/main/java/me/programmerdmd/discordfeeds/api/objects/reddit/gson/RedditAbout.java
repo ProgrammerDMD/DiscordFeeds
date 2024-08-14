@@ -7,11 +7,11 @@ public class RedditAbout {
     public Data data;
 
     public String getCommunityIcon() {
-        return HtmlUtils.htmlUnescape(data.community_icon);
+        return HtmlUtils.htmlUnescape(data.icon_img);
     }
 
     public static class Data {
-        public String community_icon;
+        public String icon_img;
     }
 
 }

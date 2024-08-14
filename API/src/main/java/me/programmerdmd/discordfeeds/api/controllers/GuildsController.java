@@ -35,6 +35,7 @@ public class GuildsController {
             utils.scheduleJob(body);
             return ResponseEntity.ok().build();
         } catch (SchedulerException e) {
+            e.printStackTrace();
             Sentry.captureException(e);
             throw new ConflictException(e.getMessage());
         }
@@ -51,6 +52,7 @@ public class GuildsController {
 
             return ResponseEntity.ok().build();
         } catch (SchedulerException e) {
+            e.printStackTrace();
             Sentry.captureException(e);
             throw new ConflictException(e.getMessage());
         }

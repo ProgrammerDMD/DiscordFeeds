@@ -36,6 +36,7 @@ public class GuildWebhookPurgerJob implements Job {
                 jobsForDeletion.add(jobExecutionContext.getJobDetail().getKey());
                 scheduler.deleteJobs(jobsForDeletion);
             } catch (Exception e) {
+                e.printStackTrace();
                 Sentry.captureException(e);
             }
         } else if (dataMap.containsKey("user")) {
@@ -51,6 +52,7 @@ public class GuildWebhookPurgerJob implements Job {
                 jobsForDeletion.add(jobExecutionContext.getJobDetail().getKey());
                 scheduler.deleteJobs(jobsForDeletion);
             } catch (Exception e) {
+                e.printStackTrace();
                 Sentry.captureException(e);
             }
         }

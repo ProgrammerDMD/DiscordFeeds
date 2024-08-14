@@ -108,6 +108,7 @@ public class RedditController {
 
             return new RedditResponse(true, id, posts);
         } catch (IOException e) {
+            e.printStackTrace();
             Sentry.captureException(e);
             throw new InternalServerException(e.getMessage());
         }

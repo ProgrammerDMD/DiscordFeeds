@@ -120,6 +120,7 @@ public class YouTubeController {
 
             return new YouTubeResponse(value.author.name, response.get("externalId"), value.author.uri, response.get("thumbnail"), videos);
         } catch (IOException e) {
+            e.printStackTrace();
             Sentry.captureException(e);
             throw new InternalServerException(e.getMessage());
         }

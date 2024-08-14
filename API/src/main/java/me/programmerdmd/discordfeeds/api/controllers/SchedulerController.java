@@ -33,6 +33,7 @@ public class SchedulerController {
 
             throw new NotFoundException("The requested job wasn't found!");
         } catch (SchedulerException e) {
+            e.printStackTrace();
             Sentry.captureException(e);
             throw new InternalServerException(e.getMessage());
         }
@@ -43,6 +44,7 @@ public class SchedulerController {
         try {
             return ResponseEntity.ok(utils.getJobs(group));
         } catch (SchedulerException e) {
+            e.printStackTrace();
             Sentry.captureException(e);
             throw new InternalServerException(e.getMessage());
         }

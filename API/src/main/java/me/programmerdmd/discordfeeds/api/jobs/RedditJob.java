@@ -94,6 +94,7 @@ public class RedditJob implements Job {
                 try {
                     Main.postRequest(baseUrl + "embed", Main.gson.toJson(new MessageBody(guild, discordChannel, builder.build().toJSONString())), false);
                 } catch (Exception e) {
+                    e.printStackTrace();
                     Sentry.captureException(e);
                 }
 
@@ -111,6 +112,7 @@ public class RedditJob implements Job {
             });
 
         } catch (Exception e) {
+            e.printStackTrace();
             Sentry.captureException(e);
         }
     }

@@ -52,6 +52,7 @@ public class BotController {
 
             return ResponseEntity.ok(Main.getJson(baseUrl + "/guilds/" + guildId + "/channels", false));
         } catch (IOException e) {
+            e.printStackTrace();
             Sentry.captureException(e);
             throw new InternalServerException(e.getMessage());
         }
@@ -78,6 +79,7 @@ public class BotController {
                 List<String> sanitizedGuilds = Main.gson.fromJson(Main.postRequest(baseUrl + "/guilds/sanitize", Main.gson.toJson(userGuilds), false), new TypeToken<List<String>>(){}.getType());
                 guilds.addAll(sanitizedGuilds);
             } catch (IOException e) {
+                e.printStackTrace();
                 Sentry.captureException(e);
                 throw new InternalServerException(e.getMessage());
             }

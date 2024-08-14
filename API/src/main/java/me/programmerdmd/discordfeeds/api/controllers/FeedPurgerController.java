@@ -45,6 +45,7 @@ public class FeedPurgerController {
             detail.getJobDataMap().put("guild", body.getId());
             scheduler.scheduleJob(detail, trigger);
         } catch (SchedulerException e) {
+            e.printStackTrace();
             Sentry.captureException(e);
             throw new InternalServerException(e.getMessage());
         }
@@ -57,6 +58,7 @@ public class FeedPurgerController {
                 throw new NotFoundException("There's not a guild with the specified ID!");
             }
         } catch (SchedulerException e) {
+            e.printStackTrace();
             Sentry.captureException(e);
             throw new InternalServerException(e.getMessage());
         }
@@ -85,6 +87,7 @@ public class FeedPurgerController {
             detail.getJobDataMap().put("user", body.getId());
             scheduler.scheduleJob(detail, trigger);
         } catch (SchedulerException e) {
+            e.printStackTrace();
             Sentry.captureException(e);
             throw new InternalServerException(e.getMessage());
         }
@@ -97,6 +100,7 @@ public class FeedPurgerController {
                 throw new NotFoundException("There's not a user with the specified ID!");
             }
         } catch (SchedulerException e) {
+            e.printStackTrace();
             Sentry.captureException(e);
             throw new InternalServerException(e.getMessage());
         }

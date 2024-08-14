@@ -53,6 +53,7 @@ public class FailedJobsListener implements JobListener {
             try {
                 context.getScheduler().deleteJob(context.getTrigger().getJobKey());
             } catch (Exception e) {
+                e.printStackTrace();
                 Sentry.captureException(e);
             }
 
@@ -76,6 +77,7 @@ public class FailedJobsListener implements JobListener {
         try {
             context.getScheduler().rescheduleJob(triggerKey, newTrigger);
         } catch (Exception e) {
+            e.printStackTrace();
             Sentry.captureException(e);
         }
     }
