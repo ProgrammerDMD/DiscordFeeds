@@ -18,7 +18,7 @@ spec:
       - name: gcrsecret
       containers:
         - name: api
-          image: {{ .Values.image }}:latest
+          image: {{ .Values.image }}:{{ .Chart.AppVersion }}
           imagePullPolicy: Always
           ports:
             - containerPort: {{ .Values.secrets.PORT }}
