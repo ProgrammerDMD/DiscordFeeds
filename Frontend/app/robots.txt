@@ -1,0 +1,5 @@
+User-Agent: *
+Allow: /
+Disallow: /dashboard/profile
+
+Sitemap: https://discordfeeds.com/sitemap.xml
