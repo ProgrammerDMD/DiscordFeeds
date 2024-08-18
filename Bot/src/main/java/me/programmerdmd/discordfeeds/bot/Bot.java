@@ -1,5 +1,6 @@
 package me.programmerdmd.discordfeeds.bot;
 
+import me.programmerdmd.discordfeeds.bot.commands.HelpCommand;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -36,6 +37,7 @@ public class Bot extends ListenerAdapter {
             return Activity.playing("discordfeeds.com");
         });
         shardManager = builder.build();
+        shardManager.addEventListener(new HelpCommand());
     }
 
     public ShardManager getShardManager() {
