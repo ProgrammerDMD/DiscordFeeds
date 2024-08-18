@@ -11,7 +11,7 @@ spec:
   - name: gcrsecret
   containers:
     - name: bot
-      image: {{ $.Values.image }}:latest
+      image: {{ $.Values.image }}:{{ $.Chart.AppVersion }}
       imagePullPolicy: Always
       ports:
         - containerPort: {{ $.Values.secrets.PORT }}
