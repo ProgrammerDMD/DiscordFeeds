@@ -50,8 +50,6 @@ public class YouTubeController {
     @Cacheable(cacheManager = "youTubeUrlCacheManager", cacheNames = "youtube", sync = true, key = "#body.url")
     @PostMapping(value = "/youtube/url", produces = "application/json")
     public ResponseEntity<String> getUrl(@RequestBody YouTubeBody body) {
-        Hint hint = new Hint();
-        hint.set("url", body.url);
         try {
             if (!youtubeUrl.matcher(body.url).matches()) {
                 throw new NotFoundException("Couldn't find the channel at the specified URL!");
@@ -83,7 +81,10 @@ public class YouTubeController {
             return ResponseEntity.ok("{ \"thumbnail\": \"" + thumbnail + "\", \"externalId\": \"" + externalId + "\"}");
         } catch (IOException e) {
             e.printStackTrace();
-            Sentry.captureException(e, hint);
+            Sentry.withScope((scope) -> {
+                scope.setContexts("url", body.url);
+                Sentry.captureException(e);
+            });
             throw new InternalServerException(e.getMessage());
         }
     }
@@ -91,8 +92,6 @@ public class YouTubeController {
     @Cacheable(cacheNames = "youtube", sync = true, key = "#body.url")
     @PostMapping(value = "/youtube", produces = "application/json")
     public YouTubeResponse handle(@RequestBody YouTubeBody body) {
-        Hint hint = new Hint();
-        hint.set("url", body.url);
         try {
             if (!youtubeUrl.matcher(body.url).matches()) {
                 throw new NotFoundException("Couldn't find the channel at the specified URL!");
@@ -127,7 +126,10 @@ public class YouTubeController {
             return new YouTubeResponse(value.author.name, response.get("externalId"), value.author.uri, response.get("thumbnail"), videos);
         } catch (IOException e) {
             e.printStackTrace();
-            Sentry.captureException(e, hint);
+            Sentry.withScope((scope) -> {
+                scope.setContexts("url", body.url);
+                Sentry.captureException(e);
+            });
             throw new InternalServerException(e.getMessage());
         }
     }

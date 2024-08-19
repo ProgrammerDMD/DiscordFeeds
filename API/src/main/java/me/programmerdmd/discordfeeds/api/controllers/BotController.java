@@ -30,7 +30,6 @@ public class BotController {
         int shardsPerPod = Integer.parseInt(environment.getProperty("SHARDS_PER_POD"));
 
         long totalGuilds = 0;
-        Hint hint = new Hint();
         for (int i = 0; i < totalShards / shardsPerPod; i++) {
             String baseUrl = "http://discordfeeds-bot-" + i + "-" + totalShards + "." + environment.getProperty("ENVIRONMENT") + ".svc.cluster.local:8080";
             try {
@@ -39,11 +38,12 @@ public class BotController {
             } catch (IOException e) {
                 e.printStackTrace();
 
-                hint.set("total_shards", totalShards);
-                hint.set("shards_per_pod", shardsPerPod);
-                hint.set("base_url", baseUrl);
-                hint.set("total_guilds", totalGuilds);
-                Sentry.captureException(e, hint);
+                Sentry.withScope((scope) -> {
+                    scope.setContexts("total_shards", totalShards);
+                    scope.setContexts("shards_per_pod", shardsPerPod);
+                    scope.setContexts("base_url", baseUrl);
+                    Sentry.captureException(e);
+                });
 
                 throw new InternalServerException(e.getMessage());
             }
@@ -55,18 +55,25 @@ public class BotController {
     @GetMapping(path = "/{guildId}/channels", produces = "application/json")
     public ResponseEntity<String> getChannels(@PathVariable Long guildId) {
         Hint hint = new Hint();
-        try {
-            int totalShards = Integer.parseInt(environment.getProperty("TOTAL_SHARDS"));
-            int shardsPerPod = Integer.parseInt(environment.getProperty("SHARDS_PER_POD"));
-            hint.set("shards_per_pod", shardsPerPod);
-            hint.set("total_shards", totalShards);
-            long shardId = (guildId >> 22) % totalShards;
-            String baseUrl = "http://discordfeeds-bot-" + ((int) (Math.ceil((shardId + 1) / Double.parseDouble(environment.getProperty("SHARDS_PER_POD"))) - 1)) + "-" + totalShards + "." + environment.getProperty("ENVIRONMENT") + ".svc.cluster.local:8080";
 
+        int totalShards = Integer.parseInt(environment.getProperty("TOTAL_SHARDS"));
+        int shardsPerPod = Integer.parseInt(environment.getProperty("SHARDS_PER_POD"));
+        long shardId = (guildId >> 22) % totalShards;
+
+        String baseUrl = "http://discordfeeds-bot-" + ((int) (Math.ceil((shardId + 1) / Double.parseDouble(environment.getProperty("SHARDS_PER_POD"))) - 1)) + "-" + totalShards + "." + environment.getProperty("ENVIRONMENT") + ".svc.cluster.local:8080";
+
+        try {
             return ResponseEntity.ok(Main.getJson(baseUrl + "/guilds/" + guildId + "/channels", false));
         } catch (IOException e) {
             e.printStackTrace();
-            Sentry.captureException(e, hint);
+
+            Sentry.withScope((scope) -> {
+                scope.setContexts("total_shards", totalShards);
+                scope.setContexts("shards_per_pod", shardsPerPod);
+                scope.setContexts("base_url", baseUrl);
+                Sentry.captureException(e);
+            });
+
             throw new InternalServerException(e.getMessage());
         }
     }
@@ -93,7 +100,14 @@ public class BotController {
                 guilds.addAll(sanitizedGuilds);
             } catch (IOException e) {
                 e.printStackTrace();
-                Sentry.captureException(e);
+
+                Sentry.withScope((scope) -> {
+                    scope.setContexts("total_shards", totalShards);
+                    scope.setContexts("shards_per_pod", environment.getProperty("SHARDS_PER_POD"));
+                    scope.setContexts("base_url", baseUrl);
+                    Sentry.captureException(e);
+                });
+
                 throw new InternalServerException(e.getMessage());
             }
         }

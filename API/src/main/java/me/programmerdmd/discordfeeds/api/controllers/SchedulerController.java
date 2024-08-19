@@ -29,29 +29,31 @@ public class SchedulerController {
 
     @DeleteMapping(path = "/{group}/{id}", produces = "application/json")
     public ResponseEntity<String> deleteJob(@PathVariable String group, @PathVariable String id) {
-        Hint hint = new Hint();
-        hint.set("group", group);
-        hint.set("id", id);
         try {
             if (scheduler.deleteJob(JobKey.jobKey(id, group))) return ResponseEntity.ok().build();
 
             throw new NotFoundException("The requested job wasn't found!");
         } catch (SchedulerException e) {
             e.printStackTrace();
-            Sentry.captureException(e, hint);
+            Sentry.withScope((scope) -> {
+                scope.setContexts("group", group);
+                scope.setContexts("id", id);
+                Sentry.captureException(e);
+            });
             throw new InternalServerException(e.getMessage());
         }
     }
 
     @GetMapping(value = "/{group}", produces = "application/json")
     public ResponseEntity<List<Job>> listJobs(@PathVariable String group) {
-        Hint hint = new Hint();
-        hint.set("group", group);
         try {
             return ResponseEntity.ok(utils.getJobs(group));
         } catch (SchedulerException e) {
             e.printStackTrace();
-            Sentry.captureException(e, hint);
+            Sentry.withScope((scope) -> {
+                scope.setContexts("group", group);
+                Sentry.captureException(e);
+            });
             throw new InternalServerException(e.getMessage());
         }
     }

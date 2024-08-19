@@ -31,8 +31,6 @@ public class RedditController {
     @Cacheable(cacheManager = "redditIconsCacheManager", cacheNames = "reddit", key="#id", sync = true)
     @GetMapping(value = "/{id}/icon", produces = "application/json")
     public ResponseEntity<String> getIcon(@PathVariable String id) {
-        Hint hint = new Hint();
-        hint.set("subreddit", id);
         try {
             String json = Main.getJson(REDDIT_URL + "r/" + id + "/about/.json", true);
             RedditAbout about = Main.gson.fromJson(json, RedditAbout.class);
@@ -40,7 +38,10 @@ public class RedditController {
             return ResponseEntity.ok("{ \"icon\": \"" + about.getCommunityIcon() + "\"}");
         } catch (IOException e) {
             e.printStackTrace();
-            Sentry.captureException(e, hint);
+            Sentry.withScope((scope) -> {
+                scope.setContexts("subreddit", id);
+                Sentry.captureException(e);
+            });
             throw new InternalServerException(e.getMessage());
         }
     }
@@ -49,10 +50,6 @@ public class RedditController {
     @GetMapping(value = "/{id}/{type}", produces = "application/json")
     public RedditResponse getPosts(@PathVariable String id, @PathVariable String type) {
         if (!(type.equalsIgnoreCase("hot") || type.equalsIgnoreCase("new"))) throw new BadRequestException("The type is not one of the following: hot, new");
-
-        Hint hint = new Hint();
-        hint.set("subreddit", id);
-        hint.set("type", type);
 
         try {
             String json = Main.getJson(REDDIT_URL + "r/" + id + "/" + type + "/.json?limit=4", true);
@@ -117,7 +114,11 @@ public class RedditController {
             return new RedditResponse(true, id, posts);
         } catch (IOException e) {
             e.printStackTrace();
-            Sentry.captureException(e, hint);
+            Sentry.withScope((scope) -> {
+                scope.setContexts("subreddit", id);
+                scope.setContexts("type", type);
+                Sentry.captureException(e);
+            });
             throw new InternalServerException(e.getMessage());
         }
     }

@@ -50,9 +50,6 @@ public class RedditJob implements Job {
         String type = dataMap.getString("type");
         String subreddit = dataMap.getString("subreddit");
 
-        Hint hint = new Hint();
-        hint.set("job_data", dataMap);
-
         try {
             json = Main.getJson(LINK + subreddit + "/" + type, false);
             Map<String, String> iconResponse = Main.gson.fromJson(Main.getJson(LINK + subreddit + "/icon", false), new TypeToken<HashMap<String, String>>(){}.getType());
@@ -94,13 +91,16 @@ public class RedditJob implements Job {
                 channels.save(new ChannelsHistory(discordChannel, "reddit", post.getId()));
 
                 String baseUrl = "http://discordfeeds-bot-" + ((int) (Math.ceil((shardId + 1) / Double.parseDouble(environment.getProperty("SHARDS_PER_POD"))) - 1)) + "-" + totalShards + "." + environment.getProperty("ENVIRONMENT") + ".svc.cluster.local:8080/";
-                hint.set("base_url", baseUrl);
 
                 try {
                     Main.postRequest(baseUrl + "embed", Main.gson.toJson(new MessageBody(guild, discordChannel, builder.build().toJSONString())), false);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    Sentry.captureException(e, hint);
+                    Sentry.withScope((scope) -> {
+                        scope.setContexts("job_details", dataMap);
+                        scope.setContexts("base_url", baseUrl);
+                        Sentry.captureException(e);
+                    });
                 }
 
                 return;
@@ -117,7 +117,10 @@ public class RedditJob implements Job {
 
         } catch (Exception e) {
             e.printStackTrace();
-            Sentry.captureException(e, hint);
+            Sentry.withScope((scope) -> {
+                scope.setContexts("job_details", dataMap);
+                Sentry.captureException(e);
+            });
         }
     }
 

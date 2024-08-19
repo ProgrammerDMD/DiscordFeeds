@@ -25,9 +25,6 @@ public class FeedPurgerController {
 
     @PostMapping("/guild")
     public void scheduleGuild(@Valid @RequestBody PurgerBody body) {
-        Hint hint = new Hint();
-        hint.set("guild_id", body.getId());
-        hint.set("purge_at", body.getPurgeAtMillis());
         try {
             SimpleTrigger trigger = newTrigger()
                     .withIdentity(body.getId(), "guildpurger")
@@ -50,31 +47,33 @@ public class FeedPurgerController {
             scheduler.scheduleJob(detail, trigger);
         } catch (SchedulerException e) {
             e.printStackTrace();
-            Sentry.captureException(e, hint);
+            Sentry.withScope((scope) -> {
+                scope.setContexts("guild", body.getId());
+                scope.setContexts("purge_at", body.getPurgeAtMillis());
+                Sentry.captureException(e);
+            });
             throw new InternalServerException(e.getMessage());
         }
     }
 
     @DeleteMapping("/guild/{guild}")
     public void unscheduleGuild(@PathVariable String guild) {
-        Hint hint = new Hint();
-        hint.set("guild_id", guild);
         try {
             if (!scheduler.deleteJob(JobKey.jobKey(guild, "guildpurger"))) {
                 throw new NotFoundException("There's not a guild with the specified ID!");
             }
         } catch (SchedulerException e) {
             e.printStackTrace();
-            Sentry.captureException(e, hint);
+            Sentry.withScope((scope) -> {
+                scope.setContexts("guild", guild);
+                Sentry.captureException(e);
+            });
             throw new InternalServerException(e.getMessage());
         }
     }
 
     @PostMapping("/user")
     public void scheduleUser(@Valid @RequestBody PurgerBody body) {
-        Hint hint = new Hint();
-        hint.set("user_id", body.getId());
-        hint.set("purge_at", body.getPurgeAtMillis());
         try {
             SimpleTrigger trigger = newTrigger()
                     .withIdentity(body.getId(), "userpurger")
@@ -97,22 +96,27 @@ public class FeedPurgerController {
             scheduler.scheduleJob(detail, trigger);
         } catch (SchedulerException e) {
             e.printStackTrace();
-            Sentry.captureException(e, hint);
+            Sentry.withScope((scope) -> {
+                scope.setContexts("user", body.getId());
+                scope.setContexts("purge_at", body.getPurgeAtMillis());
+                Sentry.captureException(e);
+            });
             throw new InternalServerException(e.getMessage());
         }
     }
 
     @DeleteMapping("/user/{user}")
     public void unscheduleUser(@PathVariable String user) {
-        Hint hint = new Hint();
-        hint.set("user_id", user);
         try {
             if (!scheduler.deleteJob(JobKey.jobKey(user, "userpurger"))) {
                 throw new NotFoundException("There's not a user with the specified ID!");
             }
         } catch (SchedulerException e) {
             e.printStackTrace();
-            Sentry.captureException(e);
+            Sentry.withScope((scope) -> {
+                scope.setContexts("user", user);
+                Sentry.captureException(e);
+            });
             throw new InternalServerException(e.getMessage());
         }
     }
