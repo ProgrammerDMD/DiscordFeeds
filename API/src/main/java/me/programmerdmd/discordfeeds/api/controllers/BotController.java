@@ -1,6 +1,7 @@
 package me.programmerdmd.discordfeeds.api.controllers;
 
 import com.google.gson.reflect.TypeToken;
+import io.sentry.Hint;
 import io.sentry.Sentry;
 import jakarta.validation.constraints.NotNull;
 import me.programmerdmd.discordfeeds.api.Main;
@@ -29,13 +30,21 @@ public class BotController {
         int shardsPerPod = Integer.parseInt(environment.getProperty("SHARDS_PER_POD"));
 
         long totalGuilds = 0;
+        Hint hint = new Hint();
         for (int i = 0; i < totalShards / shardsPerPod; i++) {
             String baseUrl = "http://discordfeeds-bot-" + i + "-" + totalShards + "." + environment.getProperty("ENVIRONMENT") + ".svc.cluster.local:8080";
             try {
                 Map<String, Integer> response = Main.gson.fromJson(Main.getJson(baseUrl + "/guilds", false), new TypeToken<HashMap<String, Integer>>(){}.getType());
                 totalGuilds += response.getOrDefault("guilds", 0);
             } catch (IOException e) {
-                Sentry.captureException(e);
+                e.printStackTrace();
+
+                hint.set("total_shards", totalShards);
+                hint.set("shards_per_pod", shardsPerPod);
+                hint.set("base_url", baseUrl);
+                hint.set("total_guilds", totalGuilds);
+                Sentry.captureException(e, hint);
+
                 throw new InternalServerException(e.getMessage());
             }
         }
@@ -45,15 +54,19 @@ public class BotController {
 
     @GetMapping(path = "/{guildId}/channels", produces = "application/json")
     public ResponseEntity<String> getChannels(@PathVariable Long guildId) {
+        Hint hint = new Hint();
         try {
             int totalShards = Integer.parseInt(environment.getProperty("TOTAL_SHARDS"));
+            int shardsPerPod = Integer.parseInt(environment.getProperty("SHARDS_PER_POD"));
+            hint.set("shards_per_pod", shardsPerPod);
+            hint.set("total_shards", totalShards);
             long shardId = (guildId >> 22) % totalShards;
             String baseUrl = "http://discordfeeds-bot-" + ((int) (Math.ceil((shardId + 1) / Double.parseDouble(environment.getProperty("SHARDS_PER_POD"))) - 1)) + "-" + totalShards + "." + environment.getProperty("ENVIRONMENT") + ".svc.cluster.local:8080";
 
             return ResponseEntity.ok(Main.getJson(baseUrl + "/guilds/" + guildId + "/channels", false));
         } catch (IOException e) {
             e.printStackTrace();
-            Sentry.captureException(e);
+            Sentry.captureException(e, hint);
             throw new InternalServerException(e.getMessage());
         }
     }

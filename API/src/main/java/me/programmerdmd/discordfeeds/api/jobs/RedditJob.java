@@ -4,6 +4,7 @@ import club.minnced.discord.webhook.WebhookClient;
 import club.minnced.discord.webhook.send.WebhookEmbed;
 import club.minnced.discord.webhook.send.WebhookEmbedBuilder;
 import com.google.gson.reflect.TypeToken;
+import io.sentry.Hint;
 import io.sentry.Sentry;
 import me.programmerdmd.discordfeeds.api.Main;
 import me.programmerdmd.discordfeeds.api.objects.MessageBody;
@@ -49,6 +50,9 @@ public class RedditJob implements Job {
         String type = dataMap.getString("type");
         String subreddit = dataMap.getString("subreddit");
 
+        Hint hint = new Hint();
+        hint.set("job_data", dataMap);
+
         try {
             json = Main.getJson(LINK + subreddit + "/" + type, false);
             Map<String, String> iconResponse = Main.gson.fromJson(Main.getJson(LINK + subreddit + "/icon", false), new TypeToken<HashMap<String, String>>(){}.getType());
@@ -90,19 +94,19 @@ public class RedditJob implements Job {
                 channels.save(new ChannelsHistory(discordChannel, "reddit", post.getId()));
 
                 String baseUrl = "http://discordfeeds-bot-" + ((int) (Math.ceil((shardId + 1) / Double.parseDouble(environment.getProperty("SHARDS_PER_POD"))) - 1)) + "-" + totalShards + "." + environment.getProperty("ENVIRONMENT") + ".svc.cluster.local:8080/";
+                hint.set("base_url", baseUrl);
 
                 try {
                     Main.postRequest(baseUrl + "embed", Main.gson.toJson(new MessageBody(guild, discordChannel, builder.build().toJSONString())), false);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    Sentry.captureException(e);
+                    Sentry.captureException(e, hint);
                 }
 
                 return;
             }
 
             WebhookClient client = WebhookClient.withUrl(dataMap.getString("webhook"));
-
             if (!webhooks.findByWebhookAndTypeAndFeedId(client.getId(), "reddit", post.getId()).isEmpty()) return;
 
             webhooks.save(new WebhooksHistory(client.getId(), "reddit", post.getId()));
@@ -113,7 +117,7 @@ public class RedditJob implements Job {
 
         } catch (Exception e) {
             e.printStackTrace();
-            Sentry.captureException(e);
+            Sentry.captureException(e, hint);
         }
     }
 

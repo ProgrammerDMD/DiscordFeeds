@@ -3,6 +3,7 @@ package me.programmerdmd.discordfeeds.api.jobs;
 import club.minnced.discord.webhook.WebhookClient;
 import club.minnced.discord.webhook.send.WebhookEmbed;
 import club.minnced.discord.webhook.send.WebhookEmbedBuilder;
+import io.sentry.Hint;
 import io.sentry.Sentry;
 import me.programmerdmd.discordfeeds.api.Main;
 import me.programmerdmd.discordfeeds.api.objects.MessageBody;
@@ -48,6 +49,9 @@ public class YouTubeJob implements Job {
         String json = null;
         String channel = dataMap.getString("channel");
 
+        Hint hint = new Hint();
+        hint.set("job_data", dataMap);
+
         try {
             json = Main.postRequest(YouTubeJob.LINK, Main.gson.toJson(new YouTubeBody("https://www.youtube.com/channel/" + channel)), false);
 
@@ -86,13 +90,13 @@ public class YouTubeJob implements Job {
                 channels.save(new ChannelsHistory(discordChannel, "youtube", video.getId()));
 
                 String baseUrl = "http://discordfeeds-bot-" + (int) (Math.ceil((shardId + 1) / Double.parseDouble(environment.getProperty("SHARDS_PER_POD"))) - 1) + "-" + totalShards + "." + environment.getProperty("ENVIRONMENT") + ".svc.cluster.local:8080/";
-                Logger.getLogger("DiscordFeeds").log(Level.INFO, baseUrl);
+                hint.set("base_url", baseUrl);
 
                 try {
                     Main.postRequest(baseUrl + "embed", Main.gson.toJson(new MessageBody(guild, discordChannel, builder.build().toJSONString())), false);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    Sentry.captureException(e);
+                    Sentry.captureException(e, hint);
                 }
 
                 return;
@@ -110,7 +114,7 @@ public class YouTubeJob implements Job {
 
         } catch (Exception e) {
             e.printStackTrace();
-            Sentry.captureException(e);
+            Sentry.captureException(e, hint);
         }
     }
 

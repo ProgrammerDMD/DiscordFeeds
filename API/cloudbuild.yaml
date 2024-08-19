@@ -20,6 +20,6 @@ steps:
     id: select-builder
   - name: 'gcr.io/cloud-builders/docker'
     entrypoint: 'bash'
-    args: ['-c', 'docker buildx build --platform "linux/arm64" -t "$LOCATION-docker.pkg.dev/$PROJECT_ID/api/production:latest" -t "$LOCATION-docker.pkg.dev/$PROJECT_ID/api/production:1.0.1"  ./API/ --push']
+    args: ['-c', 'docker buildx build --platform "linux/arm64" -t "$LOCATION-docker.pkg.dev/$PROJECT_ID/api/production:latest" -t "$LOCATION-docker.pkg.dev/$PROJECT_ID/api/production:1.0.2"  ./API/ --push']
 options:
   logging: CLOUD_LOGGING_ONLY

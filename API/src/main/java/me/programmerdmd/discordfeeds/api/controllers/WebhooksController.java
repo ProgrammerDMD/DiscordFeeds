@@ -1,5 +1,6 @@
 package me.programmerdmd.discordfeeds.api.controllers;
 
+import io.sentry.Hint;
 import io.sentry.Sentry;
 import jakarta.validation.Valid;
 import me.programmerdmd.discordfeeds.api.exceptions.ConflictException;
@@ -26,6 +27,8 @@ public class WebhooksController {
 
     @PostMapping(produces = "application/json")
     public ResponseEntity<String> schedule(@Valid @RequestBody WebhooksBody body) {
+        Hint hint = new Hint();
+        hint.set("body", body);
         try {
             JobDetail detail = utils.getJobDetail(body);
             if  (scheduler.checkExists(detail.getKey())) {
@@ -36,13 +39,15 @@ public class WebhooksController {
             return ResponseEntity.ok().build();
         } catch (SchedulerException e) {
             e.printStackTrace();
-            Sentry.captureException(e);
+            Sentry.captureException(e, hint);
             throw new ConflictException(e.getMessage());
         }
     }
 
     @PatchMapping(value = "/{group}/{id}", produces = "application/json")
     public ResponseEntity<String> update(@PathVariable String group, @PathVariable String id, @Valid @RequestBody WebhooksBody body) {
+        Hint hint = new Hint();
+        hint.set("body", body);
         try {
             JobDetail oldJob = scheduler.getJobDetail(JobKey.jobKey(id, group));
             if (oldJob == null) throw new JobDetailNotFoundException();
@@ -53,7 +58,7 @@ public class WebhooksController {
             return ResponseEntity.ok().build();
         } catch (SchedulerException e) {
             e.printStackTrace();
-            Sentry.captureException(e);
+            Sentry.captureException(e, hint);
             throw new ConflictException(e.getMessage());
         }
     }

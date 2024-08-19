@@ -2,6 +2,7 @@ package me.programmerdmd.discordfeeds.api.controllers;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.google.gson.reflect.TypeToken;
+import io.sentry.Hint;
 import io.sentry.Sentry;
 import me.programmerdmd.discordfeeds.api.Main;
 import me.programmerdmd.discordfeeds.api.exceptions.InternalServerException;
@@ -49,6 +50,8 @@ public class YouTubeController {
     @Cacheable(cacheManager = "youTubeUrlCacheManager", cacheNames = "youtube", sync = true, key = "#body.url")
     @PostMapping(value = "/youtube/url", produces = "application/json")
     public ResponseEntity<String> getUrl(@RequestBody YouTubeBody body) {
+        Hint hint = new Hint();
+        hint.set("url", body.url);
         try {
             if (!youtubeUrl.matcher(body.url).matches()) {
                 throw new NotFoundException("Couldn't find the channel at the specified URL!");
@@ -79,7 +82,8 @@ public class YouTubeController {
 
             return ResponseEntity.ok("{ \"thumbnail\": \"" + thumbnail + "\", \"externalId\": \"" + externalId + "\"}");
         } catch (IOException e) {
-            Sentry.captureException(e);
+            e.printStackTrace();
+            Sentry.captureException(e, hint);
             throw new InternalServerException(e.getMessage());
         }
     }
@@ -87,6 +91,8 @@ public class YouTubeController {
     @Cacheable(cacheNames = "youtube", sync = true, key = "#body.url")
     @PostMapping(value = "/youtube", produces = "application/json")
     public YouTubeResponse handle(@RequestBody YouTubeBody body) {
+        Hint hint = new Hint();
+        hint.set("url", body.url);
         try {
             if (!youtubeUrl.matcher(body.url).matches()) {
                 throw new NotFoundException("Couldn't find the channel at the specified URL!");
@@ -121,7 +127,7 @@ public class YouTubeController {
             return new YouTubeResponse(value.author.name, response.get("externalId"), value.author.uri, response.get("thumbnail"), videos);
         } catch (IOException e) {
             e.printStackTrace();
-            Sentry.captureException(e);
+            Sentry.captureException(e, hint);
             throw new InternalServerException(e.getMessage());
         }
     }
