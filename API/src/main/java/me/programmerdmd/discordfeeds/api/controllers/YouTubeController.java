@@ -100,7 +100,7 @@ public class YouTubeController {
 
             Map<String, String> response = Main.gson.fromJson(Main.postRequest("http://localhost:8080/youtube/url", Main.gson.toJson(body, YouTubeBody.class), false), new TypeToken<HashMap<String, String>>(){}.getType());
 
-            YouTubeXML value = mapper.readValue(Main.getString("https://www.youtube.com/feeds/videos.xml?channel_id=" + response.get("externalId"), true), YouTubeXML.class);
+            YouTubeXML value = mapper.readValue(Main.getJson("https://www.youtube.com/feeds/videos.xml?channel_id=" + response.get("externalId"), true), YouTubeXML.class);
             List<YouTubeVideo> videos = new ArrayList<>();
 
             long date = Instant.now().toEpochMilli();

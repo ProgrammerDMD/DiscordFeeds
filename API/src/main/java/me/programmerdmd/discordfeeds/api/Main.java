@@ -28,30 +28,10 @@ public class Main {
 
 	public static Gson gson = new Gson();
 
-	public static String getString(String url, boolean useProxy) throws IOException {
-		URL urlConn = new URL(url);
-		HttpURLConnection httpConn = (HttpURLConnection) (useProxy ? urlConn.openConnection(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("us.smartproxy.com", 20000))) : urlConn.openConnection());
-		httpConn.setConnectTimeout(5000);
-		httpConn.addRequestProperty("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246");
-
-		try (InputStream input = httpConn.getInputStream()) {
-			InputStreamReader isr = new InputStreamReader(input);
-			BufferedReader reader = new BufferedReader(isr);
-			StringBuilder json = new StringBuilder();
-			int c;
-			while ((c = reader.read()) != -1) {
-				json.append((char) c);
-			}
-
-			return json.toString();
-		}
-	}
-
 	public static String getJson(String url, boolean useProxy) throws IOException {
 		URL urlConn = new URL(url);
 
 		HttpURLConnection httpConn = (HttpURLConnection) (useProxy ? urlConn.openConnection(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("us.smartproxy.com", 20000))) : urlConn.openConnection());
-		httpConn.addRequestProperty("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246");
 
 		try (InputStream input = httpConn.getInputStream()) {
 			InputStreamReader isr = new InputStreamReader(input);

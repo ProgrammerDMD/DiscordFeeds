@@ -34,7 +34,7 @@ public class RedditController {
         Hint hint = new Hint();
         hint.set("subreddit", id);
         try {
-            String json = Main.getString(REDDIT_URL + "r/" + id + "/about/.json", true);
+            String json = Main.getJson(REDDIT_URL + "r/" + id + "/about/.json", true);
             RedditAbout about = Main.gson.fromJson(json, RedditAbout.class);
 
             return ResponseEntity.ok("{ \"icon\": \"" + about.getCommunityIcon() + "\"}");
@@ -55,7 +55,7 @@ public class RedditController {
         hint.set("type", type);
 
         try {
-            String json = Main.getString(REDDIT_URL + "r/" + id + "/" + type + "/.json?limit=4", true);
+            String json = Main.getJson(REDDIT_URL + "r/" + id + "/" + type + "/.json?limit=4", true);
 
             RedditJson reddit = Main.gson.fromJson(json, RedditJson.class);
             List<RedditPost> posts = new ArrayList<>();
