@@ -89,6 +89,10 @@ public class Main {
 		try (OutputStream os = httpConn.getOutputStream()) {
 			byte[] input = body.getBytes(StandardCharsets.UTF_8);
 			os.write(input, 0, input.length);
+		}
+
+		try (InputStream inputStream = httpConn.getInputStream()) {
+
 		} finally {
 			httpConn.disconnect();
 		}
