@@ -19,7 +19,7 @@ public class GuildWebhookPurgerJob implements Job {
     private SchedulerUtils utils;
 
     @Override
-    public void execute(JobExecutionContext jobExecutionContext) {
+    public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         JobDataMap dataMap = jobExecutionContext.getJobDetail().getJobDataMap();
 
         if (dataMap.containsKey("guild")) {
@@ -36,11 +36,7 @@ public class GuildWebhookPurgerJob implements Job {
                 jobsForDeletion.add(jobExecutionContext.getJobDetail().getKey());
                 scheduler.deleteJobs(jobsForDeletion);
             } catch (Exception e) {
-                e.printStackTrace();
-                Sentry.withScope((scope) -> {
-                    scope.setContexts("job_details", dataMap);
-                    Sentry.captureException(e);
-                });
+                throw new JobExecutionException();
             }
         } else if (dataMap.containsKey("user")) {
             try {
@@ -55,11 +51,7 @@ public class GuildWebhookPurgerJob implements Job {
                 jobsForDeletion.add(jobExecutionContext.getJobDetail().getKey());
                 scheduler.deleteJobs(jobsForDeletion);
             } catch (Exception e) {
-                e.printStackTrace();
-                Sentry.withScope((scope) -> {
-                    scope.setContexts("job_details", dataMap);
-                    Sentry.captureException(e);
-                });
+               throw new JobExecutionException();
             }
         }
     }

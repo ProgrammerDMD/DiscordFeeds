@@ -54,7 +54,10 @@ public class FailedJobsListener implements JobListener {
                 context.getScheduler().deleteJob(context.getTrigger().getJobKey());
             } catch (Exception e) {
                 e.printStackTrace();
-                Sentry.captureException(e);
+                Sentry.withScope((scope) -> {
+                    scope.setContexts("job_details", context.getJobDetail().getJobDataMap());
+                    Sentry.captureException(e);
+                });
             }
 
             return;
@@ -78,7 +81,10 @@ public class FailedJobsListener implements JobListener {
             context.getScheduler().rescheduleJob(triggerKey, newTrigger);
         } catch (Exception e) {
             e.printStackTrace();
-            Sentry.captureException(e);
+            Sentry.withScope((scope) -> {
+                scope.setContexts("job_details", context.getJobDetail().getJobDataMap());
+                Sentry.captureException(e);
+            });
         }
     }
 

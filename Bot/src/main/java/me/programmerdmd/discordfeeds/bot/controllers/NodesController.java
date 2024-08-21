@@ -1,5 +1,6 @@
 package me.programmerdmd.discordfeeds.bot.controllers;
 
+import io.sentry.Sentry;
 import jakarta.validation.Valid;
 import me.programmerdmd.discordfeeds.bot.Bot;
 import me.programmerdmd.discordfeeds.bot.exceptions.NotFoundException;
@@ -31,6 +32,10 @@ public class NodesController {
     public ResponseEntity<String> sendEmbed(@Valid @RequestBody MessageBody body) {
         TextChannel channel = bot.getShardManager().getTextChannelById(body.getChannel());
         if (channel == null) {
+            Sentry.withScope((scope) -> {
+                scope.setContexts("body", body);
+                Sentry.captureMessage("The specified channel wasn't found!");
+            });
             throw new NotFoundException("The specified channel wasn't found!");
         }
 
@@ -42,7 +47,13 @@ public class NodesController {
     @GetMapping(path = "/guilds/{guildId}/channels", produces = "application/json")
     public ResponseEntity<List<Channel>> getChannels(@PathVariable String guildId) {
         Guild guild = bot.getShardManager().getGuildById(guildId);
-        if (guild == null) throw new NotFoundException("The specified guild wasn't found!");
+        if (guild == null) {
+            Sentry.withScope((scope) -> {
+                scope.setContexts("guild", guildId);
+                Sentry.captureMessage("The specified guild wasn't found!");
+            });
+            throw new NotFoundException("The specified guild wasn't found!");
+        }
 
         List<Channel> channels = new ArrayList<>();
         for (TextChannel channel : guild.getTextChannels()) {

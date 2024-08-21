@@ -36,7 +36,7 @@ public class RedditController {
             RedditAbout about = Main.gson.fromJson(json, RedditAbout.class);
 
             return ResponseEntity.ok("{ \"icon\": \"" + about.getCommunityIcon() + "\"}");
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             Sentry.withScope((scope) -> {
                 scope.setContexts("subreddit", id);
@@ -112,7 +112,7 @@ public class RedditController {
             }
 
             return new RedditResponse(true, id, posts);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             Sentry.withScope((scope) -> {
                 scope.setContexts("subreddit", id);

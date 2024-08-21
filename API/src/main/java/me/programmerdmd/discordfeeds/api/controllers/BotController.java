@@ -35,7 +35,7 @@ public class BotController {
             try {
                 Map<String, Integer> response = Main.gson.fromJson(Main.getJson(baseUrl + "/guilds", false), new TypeToken<HashMap<String, Integer>>(){}.getType());
                 totalGuilds += response.getOrDefault("guilds", 0);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
 
                 Sentry.withScope((scope) -> {
@@ -64,7 +64,7 @@ public class BotController {
 
         try {
             return ResponseEntity.ok(Main.getJson(baseUrl + "/guilds/" + guildId + "/channels", false));
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
 
             Sentry.withScope((scope) -> {
@@ -98,7 +98,7 @@ public class BotController {
             try {
                 List<String> sanitizedGuilds = Main.gson.fromJson(Main.postRequest(baseUrl + "/guilds/sanitize", Main.gson.toJson(userGuilds), false), new TypeToken<List<String>>(){}.getType());
                 guilds.addAll(sanitizedGuilds);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
 
                 Sentry.withScope((scope) -> {

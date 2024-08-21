@@ -87,17 +87,7 @@ public class YouTubeJob implements Job {
                 channels.save(new ChannelsHistory(discordChannel, "youtube", video.getId()));
 
                 String baseUrl = "http://discordfeeds-bot-" + (int) (Math.ceil((shardId + 1) / Double.parseDouble(environment.getProperty("SHARDS_PER_POD"))) - 1) + "-" + totalShards + "." + environment.getProperty("ENVIRONMENT") + ".svc.cluster.local:8080/";
-
-                try {
-                    Main.postRequest(baseUrl + "embed", Main.gson.toJson(new MessageBody(guild, discordChannel, builder.build().toJSONString())), false);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Sentry.withScope((scope) -> {
-                        scope.setContexts("job_details", dataMap);
-                        scope.setContexts("base_url", baseUrl);
-                        Sentry.captureException(e);
-                    });
-                }
+                Main.postRequestNoBody(baseUrl + "embed", Main.gson.toJson(new MessageBody(guild, discordChannel, builder.build().toJSONString())), false);
 
                 return;
             }
@@ -113,11 +103,7 @@ public class YouTubeJob implements Job {
             });
 
         } catch (Exception e) {
-            e.printStackTrace();
-            Sentry.withScope((scope) -> {
-                scope.setContexts("job_details", dataMap);
-                Sentry.captureException(e);
-            });
+            throw new JobExecutionException();
         }
     }
 

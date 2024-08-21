@@ -7,6 +7,7 @@ import com.google.gson.reflect.TypeToken;
 import io.sentry.Hint;
 import io.sentry.Sentry;
 import me.programmerdmd.discordfeeds.api.Main;
+import me.programmerdmd.discordfeeds.api.exceptions.JobDetailNotFoundException;
 import me.programmerdmd.discordfeeds.api.objects.MessageBody;
 import me.programmerdmd.discordfeeds.api.objects.database.ChannelsHistory;
 import me.programmerdmd.discordfeeds.api.objects.database.WebhooksHistory;
@@ -91,17 +92,7 @@ public class RedditJob implements Job {
                 channels.save(new ChannelsHistory(discordChannel, "reddit", post.getId()));
 
                 String baseUrl = "http://discordfeeds-bot-" + ((int) (Math.ceil((shardId + 1) / Double.parseDouble(environment.getProperty("SHARDS_PER_POD"))) - 1)) + "-" + totalShards + "." + environment.getProperty("ENVIRONMENT") + ".svc.cluster.local:8080/";
-
-                try {
-                    Main.postRequest(baseUrl + "embed", Main.gson.toJson(new MessageBody(guild, discordChannel, builder.build().toJSONString())), false);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Sentry.withScope((scope) -> {
-                        scope.setContexts("job_details", dataMap);
-                        scope.setContexts("base_url", baseUrl);
-                        Sentry.captureException(e);
-                    });
-                }
+                Main.postRequestNoBody(baseUrl + "embed", Main.gson.toJson(new MessageBody(guild, discordChannel, builder.build().toJSONString())), false);
 
                 return;
             }
@@ -116,11 +107,7 @@ public class RedditJob implements Job {
             });
 
         } catch (Exception e) {
-            e.printStackTrace();
-            Sentry.withScope((scope) -> {
-                scope.setContexts("job_details", dataMap);
-                Sentry.captureException(e);
-            });
+            throw new JobExecutionException();
         }
     }
 

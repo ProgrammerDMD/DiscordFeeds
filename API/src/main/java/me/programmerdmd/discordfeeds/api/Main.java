@@ -78,4 +78,19 @@ public class Main {
 
 	}
 
+	public static void postRequestNoBody(String url, String body, boolean useProxy) throws IOException {
+		URL urlConn = new URL(url);
+		HttpURLConnection httpConn = (HttpURLConnection) (useProxy ? urlConn.openConnection(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("us.smartproxy.com", 20000))) : urlConn.openConnection());
+		httpConn.addRequestProperty("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246");
+		httpConn.setRequestMethod("POST");
+		httpConn.setRequestProperty("Content-Type", "application/json");
+
+		try (OutputStream os = httpConn.getOutputStream()) {
+			byte[] input = body.getBytes(StandardCharsets.UTF_8);
+			os.write(input, 0, input.length);
+		} finally {
+			httpConn.disconnect();
+		}
+	}
+
 }

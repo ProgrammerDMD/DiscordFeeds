@@ -45,11 +45,10 @@ public class FeedPurgerController {
 
             detail.getJobDataMap().put("guild", body.getId());
             scheduler.scheduleJob(detail, trigger);
-        } catch (SchedulerException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             Sentry.withScope((scope) -> {
-                scope.setContexts("guild", body.getId());
-                scope.setContexts("purge_at", body.getPurgeAtMillis());
+                scope.setContexts("body", body);
                 Sentry.captureException(e);
             });
             throw new InternalServerException(e.getMessage());
@@ -62,7 +61,7 @@ public class FeedPurgerController {
             if (!scheduler.deleteJob(JobKey.jobKey(guild, "guildpurger"))) {
                 throw new NotFoundException("There's not a guild with the specified ID!");
             }
-        } catch (SchedulerException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             Sentry.withScope((scope) -> {
                 scope.setContexts("guild", guild);
@@ -94,11 +93,10 @@ public class FeedPurgerController {
 
             detail.getJobDataMap().put("user", body.getId());
             scheduler.scheduleJob(detail, trigger);
-        } catch (SchedulerException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             Sentry.withScope((scope) -> {
-                scope.setContexts("user", body.getId());
-                scope.setContexts("purge_at", body.getPurgeAtMillis());
+                scope.setContexts("body", body);
                 Sentry.captureException(e);
             });
             throw new InternalServerException(e.getMessage());
@@ -111,7 +109,7 @@ public class FeedPurgerController {
             if (!scheduler.deleteJob(JobKey.jobKey(user, "userpurger"))) {
                 throw new NotFoundException("There's not a user with the specified ID!");
             }
-        } catch (SchedulerException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             Sentry.withScope((scope) -> {
                 scope.setContexts("user", user);

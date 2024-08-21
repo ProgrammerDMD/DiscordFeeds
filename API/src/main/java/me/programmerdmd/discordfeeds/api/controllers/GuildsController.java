@@ -35,7 +35,7 @@ public class GuildsController {
 
             utils.scheduleJob(body);
             return ResponseEntity.ok().build();
-        } catch (SchedulerException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             Sentry.withScope((scope) -> {
                 scope.setContexts("body", body);
@@ -55,7 +55,7 @@ public class GuildsController {
             utils.scheduleJob(body);
 
             return ResponseEntity.ok().build();
-        } catch (SchedulerException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             Sentry.withScope((scope) -> {
                 scope.setContexts("body", body);
