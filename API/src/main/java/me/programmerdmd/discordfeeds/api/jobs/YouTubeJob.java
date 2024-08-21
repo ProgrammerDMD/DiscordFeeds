@@ -53,6 +53,7 @@ public class YouTubeJob implements Job {
             json = Main.postRequest(YouTubeJob.LINK, Main.gson.toJson(new YouTubeBody("https://www.youtube.com/channel/" + channel)), false);
 
             YouTubeResponse response = Main.gson.fromJson(json, YouTubeResponse.class);
+            if (response.getVideos().isEmpty()) return;
             YouTubeVideo video = response.getVideos().get(0);
 
             WebhookEmbedBuilder builder = new WebhookEmbedBuilder()

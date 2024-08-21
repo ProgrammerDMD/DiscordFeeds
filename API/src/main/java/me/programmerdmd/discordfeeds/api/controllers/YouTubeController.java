@@ -101,7 +101,7 @@ public class YouTubeController {
 
             YouTubeXML value = mapper.readValue(Main.getJson("https://www.youtube.com/feeds/videos.xml?channel_id=" + response.get("externalId"), true), YouTubeXML.class);
             List<YouTubeVideo> videos = new ArrayList<>();
-            if (value.entry.isEmpty()) {
+            if (value.entry == null || value.entry.isEmpty()) {
                 return new YouTubeResponse(value.author.name, response.get("externalId"), value.author.uri, response.get("thumbnail"), videos);
             }
 

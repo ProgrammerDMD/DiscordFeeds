@@ -56,6 +56,7 @@ public class RedditJob implements Job {
             Map<String, String> iconResponse = Main.gson.fromJson(Main.getJson(LINK + subreddit + "/icon", false), new TypeToken<HashMap<String, String>>(){}.getType());
 
             RedditResponse response = Main.gson.fromJson(json, RedditResponse.class);
+            if (response.getPosts().isEmpty()) return;
             RedditPost post = response.getPosts().get(0);
 
             WebhookEmbedBuilder builder = new WebhookEmbedBuilder()
