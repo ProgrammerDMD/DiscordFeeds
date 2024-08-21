@@ -107,7 +107,7 @@ public class RedditJob implements Job {
             });
 
         } catch (Exception e) {
-            throw new JobExecutionException();
+            throw new JobExecutionException(e);
         }
     }
 

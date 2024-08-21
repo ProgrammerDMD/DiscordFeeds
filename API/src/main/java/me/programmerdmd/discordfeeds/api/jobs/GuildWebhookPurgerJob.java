@@ -36,7 +36,7 @@ public class GuildWebhookPurgerJob implements Job {
                 jobsForDeletion.add(jobExecutionContext.getJobDetail().getKey());
                 scheduler.deleteJobs(jobsForDeletion);
             } catch (Exception e) {
-                throw new JobExecutionException();
+                throw new JobExecutionException(e);
             }
         } else if (dataMap.containsKey("user")) {
             try {
@@ -51,7 +51,7 @@ public class GuildWebhookPurgerJob implements Job {
                 jobsForDeletion.add(jobExecutionContext.getJobDetail().getKey());
                 scheduler.deleteJobs(jobsForDeletion);
             } catch (Exception e) {
-               throw new JobExecutionException();
+               throw new JobExecutionException(e);
             }
         }
     }

@@ -46,6 +46,12 @@ public class FailedJobsListener implements JobListener {
         int maxRetries = (int) context.getJobDetail().getJobDataMap().computeIfAbsent(MAX_RETRIES_KEY, key -> DEFAULT_MAX_RETRIES);
         int timesRetried = (int) context.getTrigger().getJobDataMap().get(RETRY_NUMBER_KEY);
 
+        jobException.printStackTrace();
+        Sentry.withScope((scope) -> {
+            scope.setContexts("job_details", context.getJobDetail().getJobDataMap());
+            Sentry.captureException(jobException);
+        });
+
         if (timesRetried > maxRetries) {
             logger.error("Job with ID and class: " + context.getJobDetail().getKey() + ", " + context.getJobDetail().getJobClass()
                     + " has run " + maxRetries + " times and has failed each time.", jobException);
