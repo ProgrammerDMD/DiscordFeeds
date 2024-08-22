@@ -1,6 +1,5 @@
 package me.programmerdmd.discordfeeds.api.controllers;
 
-import io.sentry.Hint;
 import io.sentry.Sentry;
 import me.programmerdmd.discordfeeds.api.Main;
 import me.programmerdmd.discordfeeds.api.exceptions.BadRequestException;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.HtmlUtils;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 

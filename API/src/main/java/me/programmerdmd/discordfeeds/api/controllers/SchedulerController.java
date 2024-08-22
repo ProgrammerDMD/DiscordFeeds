@@ -1,6 +1,5 @@
 package me.programmerdmd.discordfeeds.api.controllers;
 
-import io.sentry.Hint;
 import io.sentry.Sentry;
 import me.programmerdmd.discordfeeds.api.exceptions.InternalServerException;
 import me.programmerdmd.discordfeeds.api.exceptions.NotFoundException;
@@ -8,7 +7,6 @@ import me.programmerdmd.discordfeeds.api.objects.scheduler.Job;
 import me.programmerdmd.discordfeeds.api.utils.SchedulerUtils;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;

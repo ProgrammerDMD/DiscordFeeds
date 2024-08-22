@@ -16,3 +16,5 @@ secrets:
   PROXY_PASSWORD: ""
   SENTRY_AUTH_TOKEN: ""
   SENTRY_DSN: ""
+  TOPGG_AUTHORIZATION: ""
+  BOT_ID: ""

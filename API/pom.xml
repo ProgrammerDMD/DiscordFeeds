@@ -12,7 +12,7 @@
 
 	<groupId>me.programmerdmd</groupId>
 	<artifactId>DiscordFeedsAPI</artifactId>
-	<version>1.0.2</version>
+	<version>1.0.3</version>
 	<name>DiscordFeedsAPI</name>
 	<description>The API for DiscordFeeds</description>
 

@@ -4,10 +4,7 @@ import club.minnced.discord.webhook.WebhookClient;
 import club.minnced.discord.webhook.send.WebhookEmbed;
 import club.minnced.discord.webhook.send.WebhookEmbedBuilder;
 import com.google.gson.reflect.TypeToken;
-import io.sentry.Hint;
-import io.sentry.Sentry;
 import me.programmerdmd.discordfeeds.api.Main;
-import me.programmerdmd.discordfeeds.api.exceptions.JobDetailNotFoundException;
 import me.programmerdmd.discordfeeds.api.objects.MessageBody;
 import me.programmerdmd.discordfeeds.api.objects.database.ChannelsHistory;
 import me.programmerdmd.discordfeeds.api.objects.database.WebhooksHistory;
@@ -24,7 +21,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.awt.*;
-import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;

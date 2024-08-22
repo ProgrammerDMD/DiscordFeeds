@@ -6,16 +6,22 @@ import io.sentry.Sentry;
 import jakarta.validation.constraints.NotNull;
 import me.programmerdmd.discordfeeds.api.Main;
 import me.programmerdmd.discordfeeds.api.exceptions.InternalServerException;
+import me.programmerdmd.discordfeeds.api.jobs.BotGuildsJob;
+import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.quartz.JobBuilder.newJob;
+import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
+import static org.quartz.TriggerBuilder.newTrigger;
 
 @RestController
 @RequestMapping("/bot")
@@ -24,6 +30,10 @@ public class BotController {
     @Autowired
     private Environment environment;
 
+    @Autowired
+    private Scheduler scheduler;
+
+    @Cacheable(cacheNames = "guildsBotSize", key="size", sync = true)
     @GetMapping(path = "/guilds", produces = "application/json")
     public ResponseEntity<String> getGuilds() {
         int totalShards = Integer.parseInt(environment.getProperty("TOTAL_SHARDS"));
@@ -47,6 +57,23 @@ public class BotController {
 
                 throw new InternalServerException(e.getMessage());
             }
+        }
+
+        try {
+            if (!scheduler.checkExists(JobKey.jobKey("size", "botguilds"))) {
+                JobBuilder jobBuilder = newJob(BotGuildsJob.class);
+                jobBuilder.withIdentity(JobKey.jobKey("size", "botguilds"));
+
+                TriggerBuilder<SimpleTrigger> builder = newTrigger()
+                        .withSchedule(simpleSchedule()
+                                .withIntervalInMinutes(60)
+                                .repeatForever());
+
+                scheduler.scheduleJob(jobBuilder.build(), builder.build());
+            }
+        } catch (SchedulerException e) {
+            e.printStackTrace();
+            Sentry.captureException(e);
         }
 
         return ResponseEntity.ok("{ \"guilds\": " + totalGuilds + " }");

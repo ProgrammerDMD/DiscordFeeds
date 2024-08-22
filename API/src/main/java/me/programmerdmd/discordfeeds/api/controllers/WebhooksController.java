@@ -1,6 +1,5 @@
 package me.programmerdmd.discordfeeds.api.controllers;
 
-import io.sentry.Hint;
 import io.sentry.Sentry;
 import jakarta.validation.Valid;
 import me.programmerdmd.discordfeeds.api.exceptions.ConflictException;
@@ -10,7 +9,6 @@ import me.programmerdmd.discordfeeds.api.utils.SchedulerUtils;
 import org.quartz.JobDetail;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

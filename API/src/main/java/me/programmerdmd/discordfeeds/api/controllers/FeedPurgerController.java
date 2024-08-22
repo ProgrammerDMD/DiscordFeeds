@@ -1,6 +1,5 @@
 package me.programmerdmd.discordfeeds.api.controllers;
 
-import io.sentry.Hint;
 import io.sentry.Sentry;
 import jakarta.validation.Valid;
 import me.programmerdmd.discordfeeds.api.exceptions.InternalServerException;

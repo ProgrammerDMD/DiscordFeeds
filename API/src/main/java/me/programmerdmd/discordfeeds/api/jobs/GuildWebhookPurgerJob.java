@@ -1,6 +1,5 @@
 package me.programmerdmd.discordfeeds.api.jobs;
 
-import io.sentry.Sentry;
 import me.programmerdmd.discordfeeds.api.utils.SchedulerUtils;
 import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -2,7 +2,6 @@ package me.programmerdmd.discordfeeds.api.controllers;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.google.gson.reflect.TypeToken;
-import io.sentry.Hint;
 import io.sentry.Sentry;
 import me.programmerdmd.discordfeeds.api.Main;
 import me.programmerdmd.discordfeeds.api.exceptions.InternalServerException;
