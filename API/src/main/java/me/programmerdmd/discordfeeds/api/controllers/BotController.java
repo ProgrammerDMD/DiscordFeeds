@@ -33,7 +33,7 @@ public class BotController {
     @Autowired
     private Scheduler scheduler;
 
-    @Cacheable(cacheNames = "guildsBotSize", key="size", sync = true)
+    @Cacheable(cacheNames = "guildsBotSize", sync = true)
     @GetMapping(path = "/guilds", produces = "application/json")
     public ResponseEntity<String> getGuilds() {
         int totalShards = Integer.parseInt(environment.getProperty("TOTAL_SHARDS"));
