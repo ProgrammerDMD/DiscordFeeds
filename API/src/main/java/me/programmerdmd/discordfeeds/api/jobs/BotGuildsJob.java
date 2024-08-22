@@ -26,7 +26,7 @@ public class BotGuildsJob implements Job {
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
         try {
-            Map<String, Object> response = Main.gson.fromJson(Main.getJson("http://localhost:8080/bot/guilds", false), new TypeToken<HashMap<String, Objects>>(){}.getType());
+            Map<String, Object> response = Main.gson.fromJson(Main.getJson("http://localhost:8080/bot/guilds", false), new TypeToken<HashMap<String, Object>>(){}.getType());
 
             URL urlConn = new URL("https://top.gg/api/bots/" + environment.getProperty("BOT_ID") + "/stats");
             HttpURLConnection httpConn = (HttpURLConnection) urlConn.openConnection();
