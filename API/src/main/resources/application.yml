@@ -34,5 +34,5 @@ server:
   port: ${PORT}
 sentry:
   dsn: ${SENTRY_DSN}
-  sampleRate: 0.2
-  tracesSampleRate: 0.5
+  sampleRate: 0.5
+  tracesSampleRate: 0.2

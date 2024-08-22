@@ -40,21 +40,14 @@ public class FailedJobsListener implements JobListener {
 
     @Override
     public void jobWasExecuted(JobExecutionContext context, JobExecutionException jobException) {
-        if (jobException == null) {
-            return;
-        }
         int maxRetries = (int) context.getJobDetail().getJobDataMap().computeIfAbsent(MAX_RETRIES_KEY, key -> DEFAULT_MAX_RETRIES);
         int timesRetried = (int) context.getTrigger().getJobDataMap().get(RETRY_NUMBER_KEY);
-
-        jobException.printStackTrace();
-        Sentry.withScope((scope) -> {
-            scope.setContexts("job_details", context.getJobDetail().getJobDataMap());
-            Sentry.captureException(jobException);
-        });
 
         if (timesRetried > maxRetries) {
             logger.error("Job with ID and class: " + context.getJobDetail().getKey() + ", " + context.getJobDetail().getJobClass()
                     + " has run " + maxRetries + " times and has failed each time.", jobException);
+            Sentry.captureMessage("Job with ID and class: " + context.getJobDetail().getKey() + ", " + context.getJobDetail().getJobClass()
+                    + " has run " + maxRetries + " times and has failed each time.");
 
             try {
                 context.getScheduler().deleteJob(context.getTrigger().getJobKey());
@@ -77,10 +70,33 @@ public class FailedJobsListener implements JobListener {
         Trigger newTrigger = newTrigger()
                 .withIdentity(UUID.randomUUID().toString(), triggerKey.getGroup())
                 .withSchedule(simpleSchedule()
+                        .withMisfireHandlingInstructionNextWithRemainingCount()
                         .withIntervalInSeconds(interval))
                 .usingJobData(context.getTrigger().getJobDataMap())
                 .startAt(startDate)
                 .build();
+
+        if (jobException == null) {
+            newTrigger.getJobDataMap().put(RETRY_NUMBER_KEY, 0);
+
+            try {
+                context.getScheduler().rescheduleJob(triggerKey, newTrigger);
+            } catch (Exception e) {
+                e.printStackTrace();
+                Sentry.withScope((scope) -> {
+                    scope.setContexts("job_details", context.getJobDetail().getJobDataMap());
+                    Sentry.captureException(e);
+                });
+            }
+            return;
+        }
+
+        jobException.printStackTrace();
+        Sentry.withScope((scope) -> {
+            scope.setContexts("job_details", context.getJobDetail().getJobDataMap());
+            Sentry.captureException(jobException);
+        });
+
         newTrigger.getJobDataMap().put(RETRY_NUMBER_KEY, timesRetried);
 
         try {

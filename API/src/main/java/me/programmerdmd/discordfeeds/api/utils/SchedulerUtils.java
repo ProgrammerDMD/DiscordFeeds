@@ -101,6 +101,7 @@ public class SchedulerUtils {
         TriggerBuilder<SimpleTrigger> builder = newTrigger()
                 .withSchedule(simpleSchedule()
                 .withIntervalInSeconds(body.getInterval())
+                        .withMisfireHandlingInstructionNextWithRemainingCount()
                 .repeatForever());
 
         jobDetail.getJobDataMap().put("job_type", body.getJobType());
