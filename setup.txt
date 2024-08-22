@@ -14,11 +14,7 @@ gcloud projects add-iam-policy-binding <PROJECT_ID> \
     --member="serviceAccount:<SERVICE_ACCOUNT_EMAIL>" \
     --role="roles/artifactregistry.reader"
 
-kubectl create secret docker-registry gcrsecret \
-    --docker-server=<REGION>-docker.pkg.dev \
-    --docker-username=_json_key \
-    --docker-password="$(cat gcr-docker-cred.json)" \
-    --docker-email=<EMAIL> -n production
+kubectl create secret docker-registry gcrsecret --docker-server=<REGION>.pkg.dev --docker-username=_json_key --docker-password='$(cat gcr-docker-cred.json)' --docker-email=<EMAIL> -n production
 
 # Installing helm
 curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
@@ -33,17 +29,6 @@ chmod g-r ~/.kube/config
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm repo add stable https://charts.helm.sh/stable
 helm repo update
-
-kubectl delete crd alertmanagerconfigs.monitoring.coreos.com
-kubectl delete crd alertmanagers.monitoring.coreos.com
-kubectl delete crd podmonitors.monitoring.coreos.com
-kubectl delete crd probes.monitoring.coreos.com
-kubectl delete crd prometheusagents.monitoring.coreos.com
-kubectl delete crd prometheuses.monitoring.coreos.com
-kubectl delete crd prometheusrules.monitoring.coreos.com
-kubectl delete crd scrapeconfigs.monitoring.coreos.com
-kubectl delete crd servicemonitors.monitoring.coreos.com
-kubectl delete crd thanosrulers.monitoring.coreos.com
 
 helm install --namespace monitoring prometheus prometheus-community/kube-prometheus-stack --set grafana.enabled=true
 

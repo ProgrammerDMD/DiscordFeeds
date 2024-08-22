@@ -13,6 +13,8 @@ metadata:
   name: argocd-notifications-cm
   namespace: argocd
 data:
+  context: |
+    argocdUrl: "https://example.com"
   service.webhook.discord: |
     url: $webhook-url
     headers:
@@ -82,7 +84,7 @@ data:
             "actions": {}
           }
   trigger.on-health-missing: |
-    - when: app.status.health.status === 'Missing'
+    - when: app.status.health.status == 'Missing'
       send: [app-health-missing]
   trigger.on-health-degraded: |
     - when: app.status.health.status === 'Degraded'
