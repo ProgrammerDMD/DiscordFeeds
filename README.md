@@ -1,4 +1,4 @@
-![[DiscordFeeds.png]]
+![DiscordFeeds](https://github.com/ProgrammerDMD/DiscordFeeds/blob/main/Images/DiscordFeeds.png)
 
 # Requirements
 - [Kubernetes](https://kubernetes.io/) and a running cluster (like [minikube](https://minikube.sigs.k8s.io/docs/start/))
